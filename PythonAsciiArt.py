@@ -1,34 +1,31 @@
+from PIL import Image
 
-import numpy;
-import cv2;
+img = Image.open('C:/Users/CadeWeiskopf/Desktop/smiley.png', 'r')
+img = img.resize((50, 50))
+pixels = list(img.getdata())
 
-image = cv2.imread("C:/Users/weisk/Downloads/smiley.jpg")
+height = img.height
+width = img.width
+brightnessCharacters = '`^",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
 
-# pixels is array of [r,g,b] 
-pixels = numpy.asarray(image)
-
-brightness = []
-
-for x in pixels:
-    for y in x:
-        pixel = y
-        # use average for brightness
-        bright = (int(pixel[0]) + int(pixel[1]) + int(pixel[2])) / 3
-        brightness.append(bright)
-
-
-bChars = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
-output = ""
-for b in brightness:
-    if b != 0:
-        scalar = 255 / b;
-        index = len(bChars) / scalar
-        index -= 1
+print('height=' + str(height) + ' width=' + str(width))
+print('length of pixels=' + str(len(pixels)))
+widthIndex = 1
+asciiText = '\n'
+for i in range(0, len(pixels)):
+    avg = pixels[i][0] + pixels[i][1] + pixels[i][2]
+    avg /= 3
+    if avg != 0:
+        brightnessIndex = 255 / int(avg)
+        brightnessIndex = len(brightnessCharacters) / brightnessIndex
+        brightnessIndex -= 1
     else:
-        scalar = 0
-        index = 0
-    bChar = bChars[int(index)]
-    output += bChar
-    #print(bChar)
+        brightnessIndex = 0
+    asciiText += brightnessCharacters[int(brightnessIndex)]
+    if widthIndex == width:
+        asciiText += '\n'
+        widthIndex = 1
+    else:
+        widthIndex += 1
 
-print(output)
+print(asciiText)
